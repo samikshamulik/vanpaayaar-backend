@@ -43,7 +43,9 @@ public class Seller extends Base {
     protected boolean consentAccepted = false;
 
     @Column(length = 20)
-    protected String adminApprovalStatus = "PENDING"; // PENDING / APPROVED / REJECTED
+    private String adminApprovalStatus = "PENDING"; // PENDING / APPROVED / REJECTED
+
+
 }
 
 

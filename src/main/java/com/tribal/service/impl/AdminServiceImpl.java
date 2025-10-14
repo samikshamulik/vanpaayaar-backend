@@ -1,11 +1,12 @@
 package com.tribal.service.impl;
 
 import com.tribal.model.*;
-import com.tribal.repository.AdminRepository;
-import com.tribal.repository.SellerRepository;
+import com.tribal.repository.*;
 import com.tribal.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 import java.util.*;
 
 @Service
@@ -17,6 +18,21 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private SellerRepository sellerRepository;
+
+    @Autowired
+    private BuyerRepository buyerRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private CouponRepository couponRepository;
+
+    @Autowired
+    private ComplaintRepository complaintRepository;
 
     @Override
     public Map<String, Object> getDashboardMetrics() {
@@ -30,104 +46,200 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Seller> getPendingSellers() {
-        return sellerRepository.findByAdminApprovalStatus("PENDING");
+    public List<Seller> getPendingSellers(String status) {
+        return sellerRepository.findByAdminApprovalStatus(status);
     }
 
     @Override
     public Seller getSellerbyId(Long sellerId) {
-        List<Integer> ids = sellerRepository.fi
-        return sellerRepository.getById(sellerId);
+
+//        List<Long> ids = sellerRepository.getAllId();
+//        for(Long i : ids){
+//            if(i == sellerId){
+//                return sellerRepository.getById(sellerId);
+//            }
+//        }
+//        return null;
+
+        return sellerRepository.findById(sellerId).orElse(null);
     }
 
     @Override
     public Seller approveSeller(Long sellerId) {
-        return null;
+        Optional<Seller> optionalSeller = sellerRepository.findById(sellerId);
+
+        if(optionalSeller.isPresent()){
+            Seller seller = optionalSeller.get();
+            seller.setAdminApprovalStatus("APPROVED");
+            return sellerRepository.save(seller);
+        }else {
+            return null;
+        }
     }
 
     @Override
     public Seller suspendSeller(Long sellerId) {
+        Optional<Seller> optionalSeller = sellerRepository.findById(sellerId);
+
+        if(optionalSeller.isPresent()){
+            Seller seller = optionalSeller.get();
+            seller.setAdminApprovalStatus("REJECTED");
+            return sellerRepository.save(seller);
+        }
         return null;
     }
 
     @Override
-    public void deleteSeller(Long sellerId) {
-
+    public Seller deleteSeller(Long sellerId) {
+        Optional<Seller> optionalSeller = sellerRepository.findById(sellerId);
+        if(optionalSeller.isPresent()){
+            Seller seller = optionalSeller.get();
+            sellerRepository.deleteById(sellerId);
+            return seller;
+        }else{
+            return null;
+        }
     }
 
     @Override
     public List<Buyer> getAllBuyers() {
-        return List.of();
+        return buyerRepository.findAll();
     }
 
     @Override
     public Buyer suspendBuyer(Long buyerId) {
+
+        Optional<Buyer> optionalBuyer = buyerRepository.findById(buyerId);
+        if(optionalBuyer.isPresent()){
+            Buyer buyer = optionalBuyer.get();
+            buyerRepository.deleteById(buyerId);
+            return buyer;
+        }
+
         return null;
     }
 
     @Override
     public Buyer getBuyerbyId(Long buyerId) {
+        Optional<Buyer> optionalBuyer = buyerRepository.findById(buyerId);
+        if(optionalBuyer.isPresent()){
+            Buyer buyer = optionalBuyer.get();
+            return buyer;
+        }
         return null;
     }
 
     @Override
-    public void deleteBuyer(Long buyerId) {
-
+    public Buyer deleteBuyer(Long buyerId) {
+        Optional<Buyer> optionalBuyer = buyerRepository.findById(buyerId);
+        if(optionalBuyer.isPresent()){
+            Buyer buyer = optionalBuyer.get();
+            sellerRepository.deleteById(buyerId);
+            return buyer ;
+        }else{
+            return null;
+        }
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return List.of();
+        return productRepository.findAll();
     }
 
     @Override
     public List<Product> getPendingProducts() {
-        return List.of();
+        // List<Product> pendingProducts = productRepository.findById()
+        return null;
     }
 
     @Override
     public Product approveProduct(Long productId) {
+//        Optional<Product> optionalProduct = productRepository.findById(productId);
+//        if (optionalProduct.isPresent()){
+//            Product product = optionalProduct.get();
+//            product.set
+//        }
         return null;
     }
 
     @Override
-    public void deleteProduct(Long productId) {
-
+    public Product deleteProduct(Long productId) {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isPresent()){
+            Product product = optionalProduct.get();
+            productRepository.deleteById(productId);
+            return product;
+        }
+        return null;
     }
 
     @Override
     public List<Order> getAllOrders() {
-        return List.of();
+        return orderRepository.findAll();
+    }
+
+    @Override
+    public Order getOrderById(Long id){
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if(optionalOrder.isPresent()){
+            Order order = optionalOrder.get();
+            return order;
+        }
+        return null;
     }
 
     @Override
     public List<Coupon> getAllCoupons() {
-        return List.of();
+        return couponRepository.findAll();
     }
 
     @Override
     public Coupon createCoupon(Coupon coupon) {
-        return null;
+        return couponRepository.save(coupon);
     }
 
     @Override
     public Coupon updateCoupon(Long couponId, Coupon couponDetails) {
+
+        Optional<Coupon> optionalCoupon = couponRepository.findById(couponId);
+        if(optionalCoupon.isPresent()){
+            Coupon coupon = optionalCoupon.get();
+            coupon.setCode(couponDetails.getCode());
+            coupon.setDiscountPercent(couponDetails.getDiscountPercent());
+            coupon.setValidTill(couponDetails.getValidTill());
+            coupon.setStatus(couponDetails.getStatus());
+//            coupon.setCategory(couponDetails.getCategory());
+            return couponRepository.save(coupon);
+        }
+
         return null;
     }
 
     @Override
-    public void deactivateCoupon(Long couponId) {
-
+    public Coupon deactivateCoupon(Long couponId) {
+        Optional<Coupon> optionalCoupon = couponRepository.findById(couponId);
+        if (optionalCoupon.isPresent()){
+            Coupon coupon = optionalCoupon.get();
+            coupon.setStatus("EXPIRED");
+            return couponRepository.save(coupon);
+        }
+        return null;
     }
 
     @Override
-    public void deleteCoupon(Long couponId) {
-
+    public Coupon deleteCoupon(Long couponId) {
+        Optional<Coupon> optionalCoupon = couponRepository.findById(couponId);
+        if (optionalCoupon.isPresent()){
+            Coupon coupon = optionalCoupon.get();
+            couponRepository.deleteById(couponId);
+            return coupon;
+        }
+        return null;
     }
 
     @Override
     public List<Complaint> getAllComplaints() {
-        return List.of();
+        return complaintRepository.findAll();
     }
 
     @Override
@@ -137,21 +249,58 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Complaint closeComplaint(Long complaintId) {
+        Optional<Complaint> optionalComplaint = complaintRepository.findById(complaintId);
+        if (optionalComplaint.isPresent()){
+            Complaint complaint = optionalComplaint.get();
+            complaint.setStatus("RESOLVED");
+            return complaintRepository.save(complaint);
+        }
         return null;
     }
 
     @Override
     public Admin getProfile() {
-        return null;
+        List<Admin> admins = adminRepository.findAll();
+        if (admins.isEmpty()){
+            return null;
+        }
+        return admins.get(0);
     }
 
     @Override
-    public Admin updateProfile(Admin updatedAdmin) {
+    public Admin updateProfile(Long adminId , Admin updatedAdmin) {
+        Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
+        if (optionalAdmin.isPresent()){
+            Admin admin = optionalAdmin.get();
+            admin.setName(updatedAdmin.getName());
+            admin.setAddress(updatedAdmin.getAddress());
+            admin.setEmail(updatedAdmin.getEmail());
+            admin.setPhone(updatedAdmin.getPhone());
+            admin.setPincode(updatedAdmin.getPincode());
+            admin.setConfirmPassword(updatedAdmin.getConfirmPassword());
+
+            return adminRepository.save(admin);
+        }
         return null;
     }
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
+        Admin admin = getProfile();
+        if (admin != null){
 
+            if(oldPassword == newPassword){
+                admin.setPassword(oldPassword);
+                admin.setConfirmPassword(oldPassword);
+                adminRepository.save(admin);
+            }else{
+                admin.setPassword(newPassword);
+                admin.setConfirmPassword(newPassword);
+                adminRepository.save(admin);
+            }
+        }
+        else{
+            System.out.println("Admin Profile Not Found");
+        }
     }
 }
