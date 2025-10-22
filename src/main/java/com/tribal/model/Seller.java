@@ -44,8 +44,6 @@ public class Seller extends Base {
 
     @Column(length = 20)
     private String adminApprovalStatus = "PENDING"; // PENDING / APPROVED / REJECTED
-
-
 }
 
 

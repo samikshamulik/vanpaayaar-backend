@@ -3,13 +3,17 @@ import com.tribal.model.Order;
 import java.util.List;
 import com.tribal.model.*;
 import java.util.Map;
+import java.util.Optional;
 
 public interface AdminService {
 
     // --- DASHBOARD ---
+
     Map<String, Object> getDashboardMetrics();
 
+
     // --- SELLER MANAGEMENT ---
+
     List<Seller> getAllSellers();
     List<Seller> getPendingSellers(String status);
     Seller getSellerbyId(Long sellerId);
@@ -17,12 +21,16 @@ public interface AdminService {
     Seller suspendSeller(Long sellerId);
     Seller deleteSeller(Long sellerId);
 
+
     // --- BUYER MANAGEMENT ---
+
     List<Buyer> getAllBuyers();
     Buyer suspendBuyer(Long buyerId);
     //Buyer reactivateBuyer(Long buyerId);
     Buyer getBuyerbyId(Long buyerId);
     Buyer deleteBuyer(Long buyerId);
+
+
 
     // --- PRODUCT MANAGEMENT ---
     List<Product> getAllProducts();
@@ -31,10 +39,14 @@ public interface AdminService {
 //    Product deactivateProduct(Long productId);
     Product deleteProduct(Long productId);
 
+
+
     // --- ORDER MANAGEMENT ---
     List<Order> getAllOrders();
     public Order getOrderById(Long id);
 //    Order updateOrderStatus(Long orderId, String status);
+
+
 
     // --- COUPON MANAGEMENT ---
     List<Coupon> getAllCoupons();
@@ -42,6 +54,8 @@ public interface AdminService {
     Coupon updateCoupon(Long couponId, Coupon couponDetails);
     Coupon deactivateCoupon(Long couponId);
     Coupon deleteCoupon(Long couponId);
+
+
 
     // --- COMPLAINT MANAGEMENT ---
     List<Complaint> getAllComplaints();

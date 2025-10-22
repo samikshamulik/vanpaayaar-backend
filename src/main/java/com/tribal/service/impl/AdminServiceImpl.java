@@ -41,8 +41,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<Seller> getAllSellers(){
-
-        return sellerRepository.findAll();
+         return sellerRepository.findAll();
     }
 
     @Override
@@ -53,19 +52,20 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Seller getSellerbyId(Long sellerId) {
 
-//        List<Long> ids = sellerRepository.getAllId();
-//        for(Long i : ids){
-//            if(i == sellerId){
-//                return sellerRepository.getById(sellerId);
-//            }
-//        }
-//        return null;
+        Optional<Seller> sellerOption = sellerRepository.findById(sellerId);
+        if(sellerOption.isPresent()){
+            Seller seller = sellerOption.get();
+            return seller;
+        }
+        else{
+            return null;
+        }
 
-        return sellerRepository.findById(sellerId).orElse(null);
     }
 
     @Override
     public Seller approveSeller(Long sellerId) {
+
         Optional<Seller> optionalSeller = sellerRepository.findById(sellerId);
 
         if(optionalSeller.isPresent()){
@@ -134,7 +134,7 @@ public class AdminServiceImpl implements AdminService {
         Optional<Buyer> optionalBuyer = buyerRepository.findById(buyerId);
         if(optionalBuyer.isPresent()){
             Buyer buyer = optionalBuyer.get();
-            sellerRepository.deleteById(buyerId);
+            buyerRepository.deleteById(buyerId);
             return buyer ;
         }else{
             return null;
@@ -204,6 +204,7 @@ public class AdminServiceImpl implements AdminService {
         Optional<Coupon> optionalCoupon = couponRepository.findById(couponId);
         if(optionalCoupon.isPresent()){
             Coupon coupon = optionalCoupon.get();
+
             coupon.setCode(couponDetails.getCode());
             coupon.setDiscountPercent(couponDetails.getDiscountPercent());
             coupon.setValidTill(couponDetails.getValidTill());
